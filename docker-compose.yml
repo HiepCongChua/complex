@@ -1,0 +1,41 @@
+version: "3"
+services:
+  # Backend
+  server:
+    container_name: server-api
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    environment:
+      POSTGRGES_URI: postgres://hieple:secret@postgres:5432/smart-brain-docker
+      REDIS_URI: redis://redis:6379
+    ports:
+      - "3000:3000"
+    volumes:
+      - /usr/src/app/node_modules
+      - ./server:/usr/src/app
+    # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy
+
+  # Postgres
+  postgres:
+    container_name: postgres_db
+    image: postgres
+    environment:
+      POSTGRES_USER: hieple
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES_HOST: postgres
+    ports:
+      - "5432:5432"
+
+  # Redis
+  redis:
+    container_name: redis_db
+    image: redis
+    ports:
+      - "6379:6379"
+  #Load_balance
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
