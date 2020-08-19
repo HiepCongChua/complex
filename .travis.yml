@@ -11,3 +11,10 @@ after_success:
   - docker image build -t hieple/multi-nginx ./nginx
   - docker image build -t hieple/multi-server ./server
   - docker image build -t hieple/multi-worker ./woker
+  # Login in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push hieple/multi-client
+  - docker push hieple/multi-nginx
+  - docker push hieple/multi-server
+  - docker push hieple/multi-worker
