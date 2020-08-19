@@ -1,41 +1,83 @@
 version: "3"
 services:
   # Backend
-  server:
-    container_name: server-api
+  api:
+    container_name: node_api
+    depends_on: 
+      - postgres
     build:
       dockerfile: Dockerfile.dev
       context: ./server
     environment:
-      POSTGRGES_URI: postgres://hieple:secret@postgres:5432/smart-brain-docker
-      REDIS_URI: redis://redis:6379
-    ports:
-      - "3000:3000"
+      # POSTGRGES_URI: postgres://hieple:secret@postgres:5432/smart-brain-docker
+      # REDIS_URI: redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PG_USER=hieple
+      - PG_HOST=postgres
+      - PG_DATABASE=complex
+      - PG_PASSWORD=secret
+      - PG_PORT=5432
+    # ports:
+    #   - "5000"
     volumes:
       - /usr/src/app/node_modules
       - ./server:/usr/src/app
     # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy
-
+  
+  # Frontend
+  client:
+    stdin_open: true
+    container_name: client_react
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    # environment:
+    # ports:
+    #   - "3000" 
+    volumes:
+      - /usr/src/app/node_modules
+      - ./client:/usr/src/app
+    # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy    
+  worker:
+    container_name: worker
+    environment: 
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379 
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes: 
+      - /usr/src/app/node_modules
+      - ./worker:/usr/src/app
   # Postgres
   postgres:
     container_name: postgres_db
     image: postgres
     environment:
-      POSTGRES_USER: hieple
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: smart-brain-docker
-      POSTGRES_HOST: postgres
-    ports:
-      - "5432:5432"
+      - POSTGRES_USER=hieple
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=complex
+      - POSTGRES_HOST=postgres
+    # ports:
+    #   - "5432"
 
   # Redis
   redis:
     container_name: redis_db
     image: redis
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379"
   #Load_balance
   nginx:
+    container_name: load_balanced
+    depends_on: 
+      - api
+      - client
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./nginx
     image: nginx
+    restart: always
     ports:
       - 80:80
