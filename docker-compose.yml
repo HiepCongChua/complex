@@ -3,14 +3,12 @@ services:
   # Backend
   api:
     container_name: node_api
-    depends_on: 
+    depends_on:
       - postgres
     build:
       dockerfile: Dockerfile.dev
       context: ./server
     environment:
-      # POSTGRGES_URI: postgres://hieple:secret@postgres:5432/smart-brain-docker
-      # REDIS_URI: redis://redis:6379
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PG_USER=hieple
@@ -18,13 +16,11 @@ services:
       - PG_DATABASE=complex
       - PG_PASSWORD=secret
       - PG_PORT=5432
-    # ports:
-    #   - "5000"
     volumes:
       - /usr/src/app/node_modules
       - ./server:/usr/src/app
     # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy
-  
+
   # Frontend
   client:
     stdin_open: true
@@ -34,20 +30,20 @@ services:
       context: ./client
     # environment:
     # ports:
-    #   - "3000" 
+    #   - "3000"
     volumes:
       - /usr/src/app/node_modules
       - ./client:/usr/src/app
-    # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy    
+    # Ngoại trừ thư mục node_modules mọi thứ thay đổi trên máy local sẽ được mounting vs thư mục trong container trong thời gian chạy
   worker:
     container_name: worker
-    environment: 
+    environment:
       - REDIS_HOST=redis
-      - REDIS_PORT=6379 
-    build: 
+      - REDIS_PORT=6379
+    build:
       dockerfile: Dockerfile.dev
       context: ./worker
-    volumes: 
+    volumes:
       - /usr/src/app/node_modules
       - ./worker:/usr/src/app
   # Postgres
@@ -71,10 +67,10 @@ services:
   #Load_balance
   nginx:
     container_name: load_balanced
-    depends_on: 
+    depends_on:
       - api
       - client
-    build: 
+    build:
       dockerfile: Dockerfile.dev
       context: ./nginx
     image: nginx
