@@ -1,79 +1,76 @@
 {
-    "AWSEBDockerrunVersion": 2,
-    "containerDefinition": [
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinition": [
+    {
+      "name": "client",
+      "image": "hieple/multi-client",
+      "hostname": "client",
+      "essential": false
+    },
+    {
+      "name": "server",
+      "image": "hieple/multi-server",
+      "hostname": "api",
+      "essential": false,
+      "environment": [
         {
-            "name": "client",
-            "image": "hieple/multi-client",
-            "hostname": "client_aws",
-            "essential": false
+          "name": "REDIS_HOST",
+          "value": "multi-docker-redis.kupig7.0001.apse1.cache.amazonaws.com"
         },
         {
-            "name": "server",
-            "image": "hieple/multi-server",
-            "hostname": "api_aws",
-            "essential": false
+          "name": "REDIS_PORT",
+          "value": "6379"
         },
         {
-            "name": "worker",
-            "image": "hieple/multi-worker",
-            "hostname": "worker_aws",
-            "essential": false,
-            "environment": [
-                {
-                    "name": "REDIS_HOST",
-                    "value": "multi-docker-redis.kupig7.0001.apse1.cache.amazonaws.com"
-                },
-                {
-                    "name": "REDIS_PORT",
-                    "value": "6379"
-                }
-            ]
+          "name": "PG_USER",
+          "value": "postgres"
         },
         {
-            "name": "nginx",
-            "image": "hieple/multi-nginx",
-            "hostname": "nginx_aws",
-            "essential": true,
-            "portMappings": [
-                {
-                    "hostPort": 3050,
-                    "containerPort": 80
-                }
-            ],
-            "links": [
-                "client",
-                "server"
-            ],
-            "environment": [
-                {
-                    "name": "REDIS_HOST",
-                    "value": "multi-docker-redis.kupig7.0001.apse1.cache.amazonaws.com"
-                },
-                {
-                    "name": "REDIS_PORT",
-                    "value": "6379"
-                },
-                {
-                    "name": "PG_USER",
-                    "value": "postgres"
-                },
-                {
-                    "name": "PG_HOST",
-                    "value": "multi-docker-postgres.cdsxvqegw81j.ap-southeast-1.rds.amazonaws.com"
-                },
-                {
-                    "name": "PG_DATABASE",
-                    "value": "fibvalues"
-                },
-                {
-                    "name": "PG_PASSWORD",
-                    "value": "postgrespassword"
-                },
-                {
-                    "name": "PG_PORT",
-                    "value": "5432"
-                }
-            ]
+          "name": "PG_HOST",
+          "value": "multi-docker-postgres.cdsxvqegw81j.ap-southeast-1.rds.amazonaws.com"
+        },
+        {
+          "name": "PG_DATABASE",
+          "value": "fibvalues"
+        },
+        {
+          "name": "PG_PASSWORD",
+          "value": "postgrespassword"
+        },
+        {
+          "name": "PG_PORT",
+          "value": "5432"
         }
-    ]
+      ]
+    },
+    {
+      "name": "worker",
+      "image": "hieple/multi-worker",
+      "hostname": "worker",
+      "essential": false,
+      "environment": [
+        {
+          "name": "REDIS_HOST",
+          "value": "multi-docker-redis.kupig7.0001.apse1.cache.amazonaws.com"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        }
+      ]
+    },
+    {
+      "name": "nginx",
+      "image": "hieple/multi-nginx",
+      "hostname": "nginx",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 3050,
+          "containerPort": 80
+        }
+      ],
+      "links": ["client", "api"]
+    }
+  ]
 }
