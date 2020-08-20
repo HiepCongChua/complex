@@ -70,7 +70,7 @@
           "containerPort": 80
         }
       ],
-      "links": ["client", "api"]
+      "links": ["client", "server"]
     }
   ]
 }
