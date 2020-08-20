@@ -18,3 +18,9 @@ after_success:
   - docker push hieple/multi-nginx
   - docker push hieple/multi-server
   - docker push hieple/multi-worker
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name
