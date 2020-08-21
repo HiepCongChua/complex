@@ -1,28 +1,31 @@
 {
     "AWSEBDockerrunVersion": 2,
-    "containerDefinition": [
+    "containerDefinitions": [
         {
             "name": "client",
             "image": "hieple/multi-client",
             "hostname": "client",
-            "essential": false
-        },
-        {
-            "name": "server",
-            "image": "hieple/multi-server",
-            "hostname": "api",
-            "essential": false
+            "essential": false,
+            "memory": 128
         },
         {
             "name": "worker",
             "image": "hieple/multi-worker",
-            "essential": false
-
+            "essential": false,
+            "memory": 128
         },
+               {
+            "name": "server",
+            "image": "hieple/multi-server",
+            "hostname": "api",
+            "essential": false,
+            "memory": 128
+        } ,
         {
             "name": "nginx",
             "image": "hieple/multi-nginx",
             "essential": true,
+            "memory": 128,
             "portMappings": [
                 {
                     "hostPort": 80,
@@ -34,5 +37,6 @@
                 "server"
             ]
         }
+
     ]
 }
