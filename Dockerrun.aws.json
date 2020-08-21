@@ -25,7 +25,6 @@
             "name": "nginx",
             "image": "hieple/multi-nginx",
             "essential": true,
-            
             "portMappings": [
                 {
                     "hostPort": 80,
