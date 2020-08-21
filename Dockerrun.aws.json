@@ -25,7 +25,7 @@
             "name": "nginx",
             "image": "hieple/multi-nginx",
             "essential": true,
-            "memory": 128,
+            
             "portMappings": [
                 {
                     "hostPort": 80,
@@ -35,7 +35,8 @@
             "links": [
                 "client",
                 "server"
-            ]
+            ],
+            "memory": 128,
         }
 
     ]
